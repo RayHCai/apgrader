@@ -1,0 +1,35 @@
+{
+    "rubric": {
+        "partA": {
+            "description": "Describe the informal power used by the president in the scenario.",
+            "points": 1,
+            "acceptable_responses": [
+                "By giving this speech, President Kennedy used the power to persuade by directly communicating with the public and gain support for his agenda.",
+                "The president used the bully pulpit when he gave his speech."
+            ],
+            "requires_example": false,
+            "requires_reference_from_scenario": true
+        },
+        "partB": {
+            "description": "In the context of the scenario, explain how the power described in part A could have impacted Congressional oversight.",
+            "points": 1,
+            "acceptable_responses": [
+                "The president's speech could have encouraged voters to pressure Congress to oversee implementation of the president's agenda, like holding a hearing on space exploration.",
+                "By bringing more attention to his agenda, the president's speech could have encouraged opponents in Congress to call for greater oversight of NASA's activities."
+            ],
+            "requires_example": true,
+            "requires_reference_from_scenario": true
+        },
+        "partC": {
+            "description": "Explain how NASA could have impacted the implementation of the president's agenda described in the scenario.",
+            "points": 1,
+            "acceptable_responses": [
+                "By using its discretionary authority, NASA could have chosen how to best carry out the mission to the moon.",
+                "NASA could have used its rulemaking authority to create the regulations that the mission to the moon will follow.",
+                "The bureaucracy could have used its discretionary and rulemaking authority to address President Kennedy's policy agenda."
+            ],
+            "requires_example": true,
+            "requires_reference_from_scenario": true
+        }
+    }
+}
