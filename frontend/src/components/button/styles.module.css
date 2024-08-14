@@ -1,0 +1,55 @@
+.button {
+    position: relative;
+
+    padding: 20px 30px;
+
+    font-weight: 100;
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+
+    border: 1px var(--white) solid;
+
+    outline: 0;
+    overflow: hidden;
+    background: none;
+
+    z-index: 1;
+    cursor: pointer;
+
+    transition: 0.2s 0.1s cubic-bezier(0.91, 0.03, 0.12, 1);
+}
+
+.button:hover {
+    color: var(--black);
+}
+
+.button:before {
+    content: '';
+    position: absolute;
+    background: var(--white);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: -1;
+    transition: 0.2s 0.1s cubic-bezier(0.91, 0.03, 0.12, 1);
+}
+
+.button:hover:before {
+    top: 0;
+}
+
+.dark {
+    color: var(--black);
+    border-color: var(--black);
+}
+
+.dark:hover {
+    color: var(--white);
+}
+
+.dark:before {
+    background: var(--black);
+}

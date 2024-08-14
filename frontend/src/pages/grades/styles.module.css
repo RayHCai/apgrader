@@ -1,0 +1,54 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    height: 100vh;
+    background: var(--white);
+}
+
+.container h1 {
+    font-weight: 100;
+    letter-spacing: 2px;
+    font-size: 2.5rem;
+}
+
+.studentAnswerContainer {
+    display: flex;
+    width: 50%;
+    gap: 32px;
+}
+
+.textareaContainer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.textareaContainer textarea {
+    width: 100%;
+    background: none;
+    resize: none;
+    outline: none;
+    border: 1px solid var(--black);
+    padding: 8px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    height: 300px;
+}
+
+.textareaContainer h3 {
+    font-weight: 100;
+    letter-spacing: 2px;
+}
+
+.sendButtonContainer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 32px;
+}
