@@ -1,0 +1,145 @@
+.container h1 {
+    font-size: 2.5rem;
+    font-weight: 100;
+    letter-spacing: 2px;
+}
+
+.startup {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+    gap: 128px;
+
+    color: var(--white);
+    background: var(--black);
+}
+
+.upload {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+
+    height: 100vh;
+    gap: 128px;
+
+    color: var(--black);
+    background: var(--white);
+
+    animation: slideIn 0.8s cubic-bezier(0.91, 0.03, 0.12, 1);
+}
+
+.slideOut {
+    position: absolute;
+    animation: slideOut 0.8s cubic-bezier(0.91, 0.03, 0.12, 1) forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.cardContainer {
+    width: 100%;
+}
+
+.cardContent {
+    padding: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    animation: fadeIn 0.8s cubic-bezier(0.91, 0.03, 0.12, 1);
+}
+
+.cardEnterAnim {
+    animation: cardSlideIn 0.4s cubic-bezier(0.91, 0.03, 0.12, 1) forwards;
+}
+
+.cardLeaveAnim {
+    animation: cardSlideOut 0.4s cubic-bezier(0.91, 0.03, 0.12, 1) forwards;
+}
+
+.card textarea {
+    background: none;
+    resize: none;
+    outline: none;
+    border: 1px solid var(--black);
+    padding: 8px;
+    font-family: var(--font-family);
+    font-size: 16px;
+    width: 70%;
+    height: 300px;
+}
+
+.arrow {
+    color: var(--black);
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 2rem;
+}
+
+.arrow:hover {
+    opacity: 0.3;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes cardSlideIn {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes cardSlideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
