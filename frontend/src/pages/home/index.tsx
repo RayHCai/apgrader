@@ -11,14 +11,15 @@ import classes from './styles.module.css';
 export default function Home() {
     const navigate = useNavigate();
 
-    const [isUpload, updateIsUpload] = useState(false);
-    const [isStartup, updateIsStartup] = useState(true);
+    const [isUploading, setUploading] = useState(false);
+    const [isStartup, setIsStartup] = useState(true);
 
-    const [slideOutAnimation, updateSlideOutAnimation] = useState(false);
+    const [isSlideOutAnimation, updateSlideOutAnimation] = useState(false);
 
     const [cardInd, updateCardInd] = useState(0);
-    const [cardEnterAnim, updateCardEnterAnim] = useState(false);
-    const [cardLeaveAnim, updateCardLeaveAnim] = useState(false);
+
+    const [isCardEnterAnim, updateCardEnterAnim] = useState(false);
+    const [isCardLeaveAnim, updateCardLeaveAnim] = useState(false);
 
     const [question, updateQuestion] = useState('');
     const [rubric, updateRubric] = useState('');
@@ -26,45 +27,50 @@ export default function Home() {
     async function upload() {
         if (!question || !rubric) return;
 
-        const response = await fetch(`${BACKEND_URL}/assignments/`, {
+        const response = await fetch(`${ BACKEND_URL }/assignments/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 question,
-                rubric,
-            }),
+                rubric
+            })
         });
 
         if (!response.ok) return;
 
         const json = await response.json();
 
-        navigate(`/grades?id=${json.assignment}`);
+        navigate(`/grades?id=${ json.assignment }`);
     }
 
     return (
         <div className={ classes.container }>
             <div
-                className={ `${isStartup ? classes.startup : classes.hidden} ${
-                    slideOutAnimation ? classes.slideOut : ''
-                }` }
-                onAnimationEnd={ () => updateIsStartup(false) }
+                className={
+                    `
+                    ${ isStartup ? classes.startup : classes.hidden }
+                    ${ isSlideOutAnimation ? classes.slideOut : '' }
+                    `
+                }
+                onAnimationEnd={ () => setIsStartup(false) }
             >
                 <h1>apgrader</h1>
 
                 <Button
-                    onClick={ () => {
-                        updateIsUpload(true);
-                        updateSlideOutAnimation(true);
-                    } }
+                    onClick={
+                        () => {
+                            setUploading(true);
+                            updateSlideOutAnimation(true);
+                        }
+                    }
                 >
                     start grading
                 </Button>
             </div>
 
-            <div className={ `${isUpload ? classes.upload : classes.hidden}` }>
+            <div className={ isUploading ? classes.upload : classes.hidden }>
                 <div className={ classes.cardContainer }>
                     { (function () {
                         const cards = [
@@ -73,8 +79,8 @@ export default function Home() {
 
                                 <textarea
                                     value={ question }
-                                    onChange={ (e) =>
-                                        updateQuestion(e.target.value)
+                                    onChange={
+                                        e => updateQuestion(e.target.value)
                                     }
                                 />
                             </>,
@@ -83,8 +89,8 @@ export default function Home() {
 
                                 <textarea
                                     value={ rubric }
-                                    onChange={ (e) =>
-                                        updateRubric(e.target.value)
+                                    onChange={
+                                        e => updateRubric(e.target.value)
                                     }
                                 />
                             </>,
@@ -95,30 +101,32 @@ export default function Home() {
                                 { cardInd > 0 && (
                                     <IoIosArrowBack
                                         className={ classes.arrow }
-                                        onClick={ () => {
-                                            updateCardLeaveAnim(true);
-                                            updateCardInd(cardInd - 1);
-                                        } }
+                                        onClick={
+                                            () => {
+                                                updateCardLeaveAnim(true);
+                                                updateCardInd(cardInd - 1);
+                                            }
+                                        }
                                     />
                                 ) }
 
                                 <div
-                                    className={ `${classes.card}
-                                            ${
-                                                cardEnterAnim &&
-                                                classes.cardEnterAnim
-                                            }
-                                            ${
-                                                cardLeaveAnim &&
-                                                classes.cardLeaveAnim
-                                            }` }
+                                    className={
+                                        `${classes.card}
+                                        ${
+                                            isCardEnterAnim &&
+                                            classes.cardEnterAnim
+                                        }
+                                        ${
+                                            isCardLeaveAnim &&
+                                            classes.cardLeaveAnim
+                                        }`
+                                    }
                                     onAnimationEnd={ () => {
-                                        if (cardEnterAnim) {
+                                        if (isCardEnterAnim)
                                             updateCardEnterAnim(false);
-                                        }
- else if (cardLeaveAnim) {
+                                        else if (isCardLeaveAnim)
                                             updateCardLeaveAnim(false);
-                                        }
                                     } }
                                 >
                                     { cards[cardInd] }
@@ -127,15 +135,20 @@ export default function Home() {
                                 { cardInd < cards.length - 1 && (
                                     <IoIosArrowForward
                                         className={ classes.arrow }
-                                        onClick={ () => {
-                                            updateCardEnterAnim(true);
-                                            updateCardInd(cardInd + 1);
-                                        } }
+                                        onClick={
+                                            () => {
+                                                updateCardEnterAnim(true);
+                                                updateCardInd(cardInd + 1);
+                                            }
+                                        }
                                     />
                                 ) }
 
                                 { cardInd === cards.length - 1 && (
-                                    <Button isDark={ true } onClick={ upload }>
+                                    <Button
+                                        isDark={ true }
+                                        onClick={ upload }
+                                    >
                                         upload
                                     </Button>
                                 ) }
