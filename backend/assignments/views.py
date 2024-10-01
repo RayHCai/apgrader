@@ -4,11 +4,15 @@ import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+import anthropic
+import base64
+
 from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 OPENAI_API_SECRET = os.getenv("OPENAI_API_SECRET")
+ANTHROPIC_API_SECRET = os.getenv("ANTHROPIC_API_SECRET");
 
 from .models import Assignment
 
@@ -85,6 +89,35 @@ def gen_grades(assignment, json_rubric, student_response):
 
     return response.choices[0].message.content
 
+def gen_text_from_image(image):
+    encoded_string = base64.b64encode(image.read()).decode('utf-8')
+
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_SECRET)
+    message = client.messages.create(
+        model='claude-3-5-sonnet-20240620',
+        max_tokens=1024,
+        messages=[
+            {
+                'role': 'user',
+                'content': [
+                    {
+                        'type': 'image',
+                        'source': {
+                            'type': 'base64',
+                            'media_type': 'image/png',
+                            'data': encoded_string,
+                        },
+                    },
+                    {
+                        'type': 'text',
+                        'text': 'Extract the text from this image.'
+                    }
+                ],
+            }
+        ],
+    )
+
+    return message.content[0].text
 
 class AssignmentView(APIView):
     def get(self, request):
@@ -103,10 +136,18 @@ class AssignmentView(APIView):
         Create Assignment Object
         """
 
-        data = request.data
+        context_image = request.FILES["context_image"]
+        questions_image = request.FILES["questions_image"]
+        rubric_image = request.FILES["rubric_image"]
+
+        context = gen_text_from_image(context_image)
+        questions = gen_text_from_image(questions_image)
+        rubric = gen_text_from_image(rubric_image)
+
+        formatted_question = context + "\n\n**QUESTIONS**\n\n" + questions
 
         assignment = Assignment.objects.create(
-            question=data["question"], rubric=data["rubric"]
+            question=formatted_question, rubric=rubric
         )
 
         return Response({"assignment": assignment.id})
@@ -119,12 +160,13 @@ class StudentResponseView(APIView):
         """
 
         data = request.data
-        assignment = Assignment.objects.get(id=data["id"])
 
+        answer_image = request.FILES["student_image"]
+        answer = gen_text_from_image(answer_image)
+
+        assignment = Assignment.objects.get(id=data["id"])
         json_rubric = gen_json_rubric(assignment)
 
-        student_response = data["student_response"]
-
-        grades = gen_grades(assignment, json_rubric, student_response)
+        grades = gen_grades(assignment, json_rubric, answer)
 
         return Response({"grades": json.loads(grades)})
