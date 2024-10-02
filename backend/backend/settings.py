@@ -19,6 +19,7 @@ CORS_ALLOWED_ORIGINS = CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:8000",
+    "https://aaae-2601-404-cb02-ed20-91c6-e7ad-186b-3d0b.ngrok-free.app"
 ]
 
 # Application definition
