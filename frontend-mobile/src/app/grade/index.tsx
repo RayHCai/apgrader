@@ -41,6 +41,8 @@ export default function Grade() {
         if(!response.ok) return;
 
         const responseJson = await response.json();
+        
+        console.log(responseJson.grade);
         updateGrades(responseJson.grade);
     }
 
