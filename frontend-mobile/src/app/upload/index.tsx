@@ -47,22 +47,33 @@ export default function Upload() {
         formData.append('context_image', blobs[0]);
         formData.append('questions_image', blobs[1]);
         formData.append('rubric_image', blobs[2]);
+        
+        try {
+            const response = await fetch(`${BACKEND_URL}/assignments/`, {
+                method: 'POST',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: formData
+            });
 
-        const response = await fetch(`${BACKEND_URL}/assignments/`, {
-            method: 'POST',
-            body: formData
-        });
+            console.log(response);
 
-        if(!response.ok) return;
+            if(!response.ok) return;
 
-        const responseJson = await response.json();
+            const responseJson = await response.json();
 
-        router.navigate({
-            pathname: '/grade',
-            params: {
-                id: responseJson.assignment
-            }
-        });
+            router.navigate({
+                pathname: '/grade',
+                params: {
+                    id: responseJson.assignment
+                }
+            });
+        }
+        catch(e) {
+            console.error(e);
+        }
     }
 
     if (!permission) return <View />;
