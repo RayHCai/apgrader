@@ -2,7 +2,8 @@ import { useState } from 'react';
 import {
     View,
     ScrollView,
-    Text
+    Text,
+    Image
 } from 'react-native';
 
 import { router } from 'expo-router';
@@ -33,29 +34,23 @@ export default function Upload() {
     }
 
     async function save() {
-        const blobs: Blob[] = [];
-
-        for(const image of images) {
-            const blobResponse = await fetch(image.uri);
-            const blob = await blobResponse.blob();
-
-            blobs.push(blob);
-        }
-
         const formData = new FormData();
 
-        formData.append('context_image', blobs[0]);
-        formData.append('questions_image', blobs[1]);
-        formData.append('rubric_image', blobs[2]);
-        
+        formData.append('context_image', { uri: images[0].uri, name: 'media', type: `image/jpg` } as any);
+        formData.append('questions_image', { uri: images[1].uri, name: 'media', type: `image/jpg` } as any);
+        formData.append('rubric_image', { uri: images[2].uri, name: 'media', type: `image/jpg` } as any);
+
         try {
             const response = await fetch(`${BACKEND_URL}/assignments/`, {
                 method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                },
                 cache: 'no-cache',
                 credentials: 'same-origin',
                 redirect: 'follow',
-                referrerPolicy: 'no-referrer',
-                body: formData
+                referrerPolicy: 'no-referrer'
             });
 
             console.log(response);
