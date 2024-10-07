@@ -1,4 +1,4 @@
-name: Frontend Lint
+name: Frontend Mobile Lint
 
 on:
     # Trigger the workflow on push or pull request,
@@ -23,6 +23,6 @@ jobs:
               uses: actions/setup-node@v3
 
             - run: npm i
-              working-directory: ./frontend
+              working-directory: ./frontend-mobile
             - run: npm run lint
-              working-directory: ./frontend
+              working-directory: ./frontend-mobile
