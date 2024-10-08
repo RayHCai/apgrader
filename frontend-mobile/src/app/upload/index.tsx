@@ -2,8 +2,7 @@ import { useState } from 'react';
 import {
     View,
     ScrollView,
-    Text,
-    Image
+    Text
 } from 'react-native';
 
 import { router } from 'expo-router';
@@ -40,35 +39,28 @@ export default function Upload() {
         formData.append('questions_image', { uri: images[1].uri, name: 'media', type: `image/jpg` } as any);
         formData.append('rubric_image', { uri: images[2].uri, name: 'media', type: `image/jpg` } as any);
 
-        try {
-            const response = await fetch(`${BACKEND_URL}/assignments/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                },
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                redirect: 'follow',
-                referrerPolicy: 'no-referrer'
-            });
+        const response = await fetch(`${BACKEND_URL}/assignments/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            },
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer'
+        });
 
-            console.log(response);
+        if(!response.ok) return;
 
-            if(!response.ok) return;
+        const responseJson = await response.json();
 
-            const responseJson = await response.json();
-
-            router.navigate({
-                pathname: '/grade',
-                params: {
-                    id: responseJson.assignment
-                }
-            });
-        }
-        catch(e) {
-            console.error(e);
-        }
+        router.navigate({
+            pathname: '/grade',
+            params: {
+                id: responseJson.assignment
+            }
+        });
     }
 
     if (!permission) return <View />;

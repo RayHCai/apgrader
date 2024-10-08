@@ -42,7 +42,6 @@ export default function Grade() {
 
         const responseJson = await response.json();
         
-        console.log(responseJson.grade);
         updateGrades(responseJson.grade);
     }
 
@@ -74,7 +73,7 @@ export default function Grade() {
                 }
             >
                 <ImageBackground
-                    source={{ uri: image!.uri }}
+                    source={ { uri: image!.uri } }
                     style={
                         {
                             width: 300,
