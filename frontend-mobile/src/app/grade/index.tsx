@@ -25,12 +25,10 @@ export default function Grade() {
     async function upload(image: CameraCapturedPicture) {
         updateImage(image);
 
-        const blobResponse = await fetch(image.uri);
-        const blob = await blobResponse.blob();
-
         const formData = new FormData();
 
-        formData.append('student_image', blob);
+        formData.append('student_image', { uri: image.uri, name: 'media', type: `image/jpg` } as any);
+        
         formData.append('id', assignmentId);
 
         const response = await fetch(`${BACKEND_URL}/grade/`, {
@@ -42,8 +40,8 @@ export default function Grade() {
 
         const responseJson = await response.json();
         
-        console.log(responseJson.grade);
-        updateGrades(responseJson.grade);
+        updateGrades(responseJson.grades);
+        updateCameraStarted(false);
     }
 
     if (!permission) return <View />;
@@ -74,7 +72,7 @@ export default function Grade() {
                 }
             >
                 <ImageBackground
-                    source={{ uri: image!.uri }}
+                    source={ { uri: image!.uri } }
                     style={
                         {
                             width: 300,

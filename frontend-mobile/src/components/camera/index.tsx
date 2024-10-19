@@ -9,7 +9,6 @@ import {
 
 import { CameraCapturedPicture, CameraView } from 'expo-camera';
 
-import { BACKEND_URL } from '@/globals/backend';
 import globalStyles from '@/globals/globalStyles';
 
 type CameraProps = {
@@ -39,7 +38,7 @@ export default function Camera(props: CameraProps) {
                 }
             >
                 <ImageBackground
-                    source={{ uri: preview.uri }}
+                    source={ { uri: preview.uri } }
                     style={ StyleSheet.absoluteFill }
                 >
                     <Pressable

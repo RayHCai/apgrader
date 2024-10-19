@@ -12,7 +12,12 @@ export default function Home() {
 
             <Button
                 onPress={
-                    () => router.navigate('/upload')
+                    () => router.navigate({
+                        pathname: '/grade',
+                        params: {
+                            id: 'e3291eea-32ac-4795-b1e1-f973e43367ff'
+                        }
+                    }) //router.navigate('/upload')
                 }
             >
                 <Text style={ styles.startGradingText }>start grading</Text>
