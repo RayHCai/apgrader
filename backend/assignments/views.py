@@ -1,8 +1,13 @@
 import os
 import json
 
+from PIL import Image
+from io import BytesIO
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from django.core.files import File
 
 import anthropic
 import base64
@@ -12,7 +17,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 OPENAI_API_SECRET = os.getenv("OPENAI_API_SECRET")
-ANTHROPIC_API_SECRET = os.getenv("ANTHROPIC_API_SECRET");
+ANTHROPIC_API_SECRET = os.getenv("ANTHROPIC_API_SECRET")
 
 from .models import Assignment
 
@@ -20,11 +25,24 @@ from .models import Assignment
 def gen_json_rubric(assignment):
     SYSTEM_PROMPT = """
     **TASK**:
-    Given a rubric, create a descriptive JSON object, modeling the rubric, that would be used to grade a student response.
+    Given a plain-text rubric, transform it into a JSON object that follows the below format. Respond ONLY with the JSON object.
 
-    **REQUIREMENTS**:
-    - Each part must include a field `requires_example` (true if part requires an example) and `requires_reference_from_scenario` (true if part requires a reference to the text or scenario).
-    - Parts that ask for an explanation require an example.
+    ```json
+    {
+        "rubric": {
+            "partA": {
+                "description": string,
+                "points": number,
+                "requires_example": true/false,
+                "requires_reference_from_scenario": true/false,
+                "acceptable_responses": string[]
+            },
+            ....
+        }
+    }
+    ```
+
+    **RESPONSE**:
     """
 
     client = OpenAI(api_key=OPENAI_API_SECRET)
@@ -89,35 +107,37 @@ def gen_grades(assignment, json_rubric, student_response):
 
     return response.choices[0].message.content
 
+
 def gen_text_from_image(image):
-    encoded_string = base64.b64encode(image.read()).decode('utf-8')
+    encoded_string = base64.b64encode(image.read()).decode("utf-8")
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_SECRET)
     message = client.messages.create(
-        model='claude-3-5-sonnet-20240620',
+        model="claude-3-5-sonnet-20240620",
         max_tokens=1024,
         messages=[
             {
-                'role': 'user',
-                'content': [
+                "role": "user",
+                "content": [
                     {
-                        'type': 'image',
-                        'source': {
-                            'type': 'base64',
-                            'media_type': 'image/png',
-                            'data': encoded_string,
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": encoded_string,
                         },
                     },
                     {
-                        'type': 'text',
-                        'text': 'Extract the text from this image.'
-                    }
+                        "type": "text",
+                        "text": "Do not describe the image. Only extract the text from this image.  If the image is a table, the extracted text should include all of the information on the table.",
+                    },
                 ],
             }
         ],
     )
 
     return message.content[0].text
+
 
 class AssignmentView(APIView):
     def get(self, request):
@@ -140,9 +160,21 @@ class AssignmentView(APIView):
         questions_image = request.FILES["questions_image"]
         rubric_image = request.FILES["rubric_image"]
 
-        context = gen_text_from_image(context_image)
-        questions = gen_text_from_image(questions_image)
-        rubric = gen_text_from_image(rubric_image)
+        images = [context_image, questions_image, rubric_image]
+        compressed_images = []
+
+        for image in images:
+            img = Image.open(image)
+
+            output = BytesIO()
+            img.save(output, format="JPEG", quality=80)
+            output.seek(0)
+
+            compressed_images.append(File(output, name=image.name))
+
+        context = gen_text_from_image(compressed_images[0])
+        questions = gen_text_from_image(compressed_images[1])
+        rubric = gen_text_from_image(compressed_images[2])
 
         formatted_question = context + "\n\n**QUESTIONS**\n\n" + questions
 
@@ -162,11 +194,24 @@ class StudentResponseView(APIView):
         data = request.data
 
         answer_image = request.FILES["student_image"]
-        answer = gen_text_from_image(answer_image)
+
+        img = Image.open(answer_image)
+
+        output = BytesIO()
+        img.save(output, format="JPEG", quality=80)
+        output.seek(0)
+
+        compressed_image = File(output, name=answer_image.name)
+
+        answer = gen_text_from_image(compressed_image)
 
         assignment = Assignment.objects.get(id=data["id"])
         json_rubric = gen_json_rubric(assignment)
 
-        grades = gen_grades(assignment, json_rubric, answer)
+        grades = (
+            gen_grades(assignment, json_rubric, answer)
+            .replace("```json", "")
+            .replace("```", "")
+        )
 
         return Response({"grades": json.loads(grades)})

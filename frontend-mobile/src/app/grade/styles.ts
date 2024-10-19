@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
         padding: 15,
         display: 'flex',
         flexDirection: 'column',
-        marginTop: 32,
+        marginTop: 50,
         gap: 32
     },
     headerText: {

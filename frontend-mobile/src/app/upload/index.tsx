@@ -2,8 +2,7 @@ import { useState } from 'react';
 import {
     View,
     ScrollView,
-    Text,
-    Image
+    Text
 } from 'react-native';
 
 import { router } from 'expo-router';
@@ -53,8 +52,6 @@ export default function Upload() {
                 referrerPolicy: 'no-referrer'
             });
 
-            console.log(response);
-
             if(!response.ok) return;
 
             const responseJson = await response.json();
@@ -67,6 +64,7 @@ export default function Upload() {
             });
         }
         catch(e) {
+            // eslint-disable-next-line no-console
             console.error(e);
         }
     }
